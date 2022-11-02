@@ -4,9 +4,22 @@ tensorflow.compat.v1.disable_v2_behavior()
 
 
 def main():
-    image = tensorflow.compat.v1.image.decode_png(tensorflow.compat.v1.read_file("test.png"), channels=3)
+    zeros = tensorflow.compat.v1.zeros([5, 6])
+    ones = tensorflow.compat.v1.ones([2, 1])
+    fill = tensorflow.compat.v1.fill([2, 2], -0.1)
+    diag = tensorflow.compat.v1.diag([2, 2, 0.1])
+    const = tensorflow.compat.v1.constant([[2, 2], [2, 3]])
     session = tensorflow.compat.v1.Session()
-    print(session.run(tensorflow.compat.v1.shape(image)))
+    print("Zeros:")
+    print(session.run(zeros))
+    print("Ones:")
+    print(session.run(ones))
+    print("Fill:")
+    print(session.run(fill))
+    print("Diag:")
+    print(session.run(diag))
+    print("Const:")
+    print(session.run(const))
 
 
 if __name__ == '__main__':

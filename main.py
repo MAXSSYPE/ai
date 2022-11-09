@@ -4,20 +4,18 @@ tensorflow.compat.v1.disable_v2_behavior()
 
 
 def main():
-    tgh = tensorflow.compat.v1.nn.tanh(
-        [-1.0, -0.99990916, -0.46211717, 0.7615942, 0.8336547, 0.9640276, 0.9950547, 1.0])
-    sigmoid = tensorflow.compat.v1.nn.sigmoid([5.0, 6.0, 7.0, 8.0, 9.0, -10.0])
-    relu = tensorflow.compat.v1.nn.relu([-2.0, 0.0, 3.0])
-    elu = tensorflow.compat.v1.nn.elu(-1000.0)
+    x = tensorflow.compat.v1.Variable(3, dtype=tensorflow.compat.v1.float32)
+    log_x = tensorflow.compat.v1.log(x)
+    log_x_squared = tensorflow.compat.v1.square(log_x)
+    optimizer = tensorflow.compat.v1.train.GradientDescentOptimizer(0.7)
+    train = optimizer.minimize(log_x_squared)
+    init = tensorflow.compat.v1.global_variables_initializer()
     session = tensorflow.compat.v1.Session()
-    print("tgh:")
-    print(session.run(tgh))
-    print("sigmoid:")
-    print(session.run(sigmoid))
-    print("relu:")
-    print(session.run(relu))
-    print("elu:")
-    print(session.run(elu))
+    session.run(init)
+    print("starting at ", "x: ", session.run(x), "log(x)^2: ", session.run(log_x_squared))
+    for step in range(10):
+        session.run(train)
+        print("step: ", step, "x: ", session.run(x), "log(x)^2: ", session.run(log_x_squared))
 
 
 if __name__ == '__main__':

@@ -7,21 +7,12 @@ tensorflow.compat.v1.enable_eager_execution()
 
 
 def main():
-    ds = tensorflow_datasets.load('voc/2007', split='train', shuffle_files=True)
+    ds = tensorflow_datasets.load('beans', split='train', shuffle_files=True)
     for index, a in enumerate(ds):
         plt.imshow(a['image'])
         plt.show()
-        print(a.keys())
-        print(a['labels'].numpy())
         if index >= 0:
             break
-
-    def augment_hue(tensor):
-        print(tensor.keys())
-        return tensorflow.image.resize(tensor['image'], (62, 62)), tensor.get('label', tensor.get('labels'))
-
-    def normalize_image(image, label):
-        return image / 255.0, label
 
     resized_dataset = ds.map(map_func=augment_hue)
     normalized_dataset = resized_dataset.map(map_func=normalize_image)
@@ -49,9 +40,25 @@ def main():
         metrics=['accuracy'],
     )
 
+    batch = 8
+    dataset = normalized_dataset.repeat().batch(batch)
+
+    model.fit(dataset, steps_per_epoch=(len(ds) / batch), epochs=3)
+
     test_dataset = tensorflow_datasets.load('beans', split='test')
-    test_dataset = test_dataset.map(map_func=augment_hue).map(map_func=normalize_image).batch(8)
-    print(model.evaluate(test_dataset))
+    test_dataset = test_dataset.map(map_func=augment_hue).map(map_func=normalize_image).batch(batch)
+    score = model.evaluate(test_dataset, verbose=0)
+    print('Test loss: ', score[0])
+    print('Test accuracy: ', score[1])
+
+
+def augment_hue(tensor):
+    print(tensor.keys())
+    return tensorflow.image.resize(tensor['image'], (62, 62)), tensor.get('label', tensor.get('labels'))
+
+
+def normalize_image(image, label):
+    return image / 255.0, label
 
 
 if __name__ == '__main__':

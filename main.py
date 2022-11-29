@@ -20,7 +20,6 @@ def main():
     for index, (image, label) in enumerate(resized_dataset):
         plt.imshow(image / 255.0)
         plt.show()
-        print(label.numpy())
         if index >= 0:
             break
 
@@ -53,7 +52,6 @@ def main():
 
 
 def augment_hue(tensor):
-    print(tensor.keys())
     return tensorflow.image.resize(tensor['image'], (62, 62)), tensor.get('label', tensor.get('labels'))
 
 
